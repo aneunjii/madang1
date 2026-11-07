@@ -8,14 +8,9 @@ st.set_page_config(page_title="마당 서점", layout="wide")
 
 # ==================== DB 연결 ====================
 def get_connection():
-    # 접속 정보는 secrets에서 읽어옴 (비밀번호를 코드에 쓰지 않기 위해)
-    cfg = st.secrets["postgres"]
-    return psycopg2.connect(host=cfg["host"],
-                            port=int(cfg.get("port", 5432)),
-                            user=cfg["user"],
-                            password=cfg["password"],
-                            dbname=cfg["database"],
-                            sslmode="require")      # Neon은 암호화(SSL) 접속 필수
+    # 접속 주소(url)는 secrets에서 읽어옴 (비밀번호를 코드에 쓰지 않기 위해)
+    # url 안에 계정·비밀번호·주소·DB이름·SSL 설정이 한 줄로 다 들어 있음
+    return psycopg2.connect(st.secrets["postgres"]["url"])
 
 
 @st.cache_data(ttl=600)   # 같은 SQL 결과는 10분 동안 캐시에 저장 → rerun 때마다 DB 재조회 X
